@@ -111,7 +111,7 @@ class AntAlgorithm:
             best_route = None
             for cycle in range(cycles_no):
                 best_cycle_route = None
-                ants = [Ant(50, self.start_city_index) for i in range(ants_no)] # todo 50 to pojemność
+                ants = [Ant(car.weight_limit, self.start_city_index) for i in range(ants_no)]
 
                 # preparation
                 if cycle == 0:
@@ -148,4 +148,4 @@ class AntAlgorithm:
 # todo aktualnie nie mamy powrotu do bazy(miasta 0), jeśli mmay dodać to wystarczy na końcu poza while do routa poprzez append startowa jak sie nie myle
 
 algorithm = AntAlgorithm()
-algorithm.calculate(["car"], 5, 5, "TestData.csv")
+algorithm.calculate([Vehicle(1000, 0) for i in range(0, 5)], 5, 5, "TestData.csv")
