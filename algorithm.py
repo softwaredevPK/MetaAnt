@@ -58,6 +58,12 @@ class AntAlgorithm:
             distance_matrix.append(city_array)
         return pd.DataFrame(distance_matrix)
 
+    def get_demand_matrix(self, cities_data):
+        demand = []
+        for city, data in cities_data.iterrows():
+            demand.append(data["demand"])
+        return demand
+
     # done
     def get_initial_visibility(self):
         """
@@ -109,6 +115,9 @@ class AntAlgorithm:
         used_routes = []
         for car_number, car in enumerate(cars):
             best_route = None
+
+            demand_matrix = self.get_demand_matrix(cities_data)
+
             for cycle in range(cycles_no):
                 best_cycle_route = None
                 ants = [Ant(car.weight_limit, self.start_city_index) for i in range(ants_no)]
@@ -134,6 +143,13 @@ class AntAlgorithm:
                         random_value = random.random()
                         cumulitive_values_from_current_city = cumulitive_possibility_matrix.iloc[ant.route[-1]]
                         new_city_to_go = cumulitive_values_from_current_city[cumulitive_values_from_current_city > random_value].index[0]
+
+                        if (demand_matrix[new_city_to_go] > car.weight_limit):
+                            # todo: powinniśmy znaleźć inne miasto jeśli to możliwe
+                            continue
+                        car.weight_limit -= demand_matrix[new_city_to_go]
+                        demand_matrix[new_city_to_go] = 0
+
                         ant.route.append(new_city_to_go)
                 # step 4
                 # update pheromone level for next cycle
@@ -141,7 +157,6 @@ class AntAlgorithm:
 
             # end of cycles
             car.route = best_cycle_route  # todo jeszcze nie wiem jak się wybiera ostateczną i najlepsza trase, na koniec cykli? w trakcie cykli? do rozkminy
-
 
 
 
